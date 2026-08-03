@@ -1,0 +1,52 @@
+# 报告设定文件（阶段 0-1 产出，确认后锁定）
+
+> 如需修改，回到阶段 0-1 重做并重走后续流程。
+
+```yaml
+report:
+  title: ""                # 报告标题
+  subtitle: ""             # 副标题
+  topic: ""                # 选题方向
+  motivation:              # 背景与业务问题
+    background: ""         # 业务现状与问题出现的上下文
+    business_problem: ""   # 要解决的业务问题
+    trigger_event: ""      # 触发事件（为什么现在做？）
+  audience:                # 目标受众
+    primary: ""            # 管理层 / 执行层 / 外部客户
+    secondary: []          # 次要受众
+  objectives:              # 报告目标
+    - decision: ""         # 要支撑的决策
+      question: ""         # 要回答的具体问题
+  success_criteria:        # 成功标准
+    goal: ""               # 总体目标
+    arguments:             # 论证拆解（含优先级与可忽略条件）
+      - name: ""
+        priority: ""       # 核心 / 重要 / 可选
+        ignorable_if: ""   # 可忽略条件
+    required_conclusions: [] # 必要结论清单
+  delivery:                # 交付形式
+    format: []             # ppt / pdf / html
+    ppt_pages: 0           # 期望 PPT 页数
+    theme: ""              # 主题偏好
+  scope:                   # 分析范围
+    time: ""               # 时间范围（如 Q2 单季 / 三年趋势）
+    business_unit: ""      # 业务线范围
+    geography: ""          # 地理范围
+  constraints:             # 时间与资源约束
+    deadline: ""           # 交付截止时间
+    analyst_availability: "" # 分析人力与可用时间
+    data_availability: ""  # 数据可得性评估
+  existing_materials:      # 已有资料与数据清单
+    - name: ""             # 资料名称
+      type: ""            # 数据表 / 埋点 / 文档 / 访谈记录
+      coverage: ""        # 覆盖范围
+      quality: ""         # 高 / 中 / 低 / 未知
+  reader_context:          # 读者先验认知与立场
+    known: ""              # 已知什么
+    stance: ""             # 倾向什么
+    persuasion: ""         # 被什么说服
+  compliance:              # 禁区与合规约束
+    cannot_quote: []       # 不能引用的数据
+    cannot_conclude: []    # 不能下的结论
+  benchmark: ""            # 标杆参照（如"像上次那份竞品分析那样"）
+```
