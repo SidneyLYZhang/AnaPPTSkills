@@ -1,6 +1,6 @@
 ---
 name: analysis-report-builder
-description: 通过 grill 追问引导 LLM 与用户协作构建经营/咨询分析报告（从需求承接到文字报告与 PPT 交付）。当用户需要"做一份分析报告/经营分析/业务分析/专题分析/竞品分析"，或提到"按 SOP 走报告流程""帮我逐步构建报告"时使用。也适用于中断后继续已有报告流程。
+description: 通过 grill 追问协作构建经营/咨询分析报告，从需求承接到文字报告与 PPT 交付，支持断点续跑。
 disable-model-invocation: true
 ---
 
@@ -79,7 +79,7 @@ setup-anappt 初始化项目
 
 向用户确认主受众、次受众、报告形态。受众决定后续每一步的深度和语言，规则见 `references/audience-adaptation.md`。
 
-管理层版不是业务版的删减版，是按决策问题组织的重写版。确认后更新 `report.yml` 的 `audience` 字段和 `_报告进度.md`。
+管理层版按决策问题组织章节（详见 `references/audience-adaptation.md`）。确认后更新 `report.yml` 的 `audience` 字段和 `_报告进度.md`。
 
 ---
 
@@ -110,9 +110,11 @@ setup-anappt 初始化项目
 
 ### 2.3 指标口径 → 方法 → 数据清单
 
+**方法选型分两层**：报告类型（咨询式/经营式）按 `references/methods-toolbox.md` 选框架；具体分析手段（四类分析层次、统计检验三步法、机器学习模型、归因方法、可视化图表）的选型决策按 `references/analysis-model-selection-guide.md`——先回答"五问法"（目标/问题域/数据条件/约束/决策支撑），再按决策矩阵落方法，选定即列出该方法的前提条件与验证方式（如选 t 检验→先做正态性检验，不满足切非参数替代）。
+
 产出物：《分析框架》+《数据需求清单》（模板 `assets/templates/01-分析框架与数据需求.md`）。
 
-**完成条件**：每个子问题都有方法；每个方法都有数据支撑或明确的代理方案。
+**完成条件**：每个子问题都有方法，且方法选型经"五问法"显式论证；每个方法都有数据支撑或明确的代理方案；统计/建模方法的前提条件已列出。
 
 ---
 
@@ -122,7 +124,7 @@ setup-anappt 初始化项目
 
 产出物：《建模决策单》（模板 `assets/templates/02-建模决策单.md`），需用户确认。
 
-若建模：进入建模子流程（模型设计 → 验证 → 业务化翻译——把系数/特征重要性/置信区间翻译成"哪些因素影响最大、影响多少、建议怎么调整"）。
+若建模：进入建模子流程（模型设计 → 验证 → 业务化翻译——把系数/特征重要性/置信区间翻译成"哪些因素影响最大、影响多少、建议怎么调整"）。模型选型（机器学习五步流程、时间序列）按 `references/analysis-model-selection-guide.md` §3.2-3.3，基线先行、同等性能选最简。
 
 ---
 
@@ -136,18 +138,8 @@ setup-anappt 初始化项目
 
 阶段 3（数据准备与确认）、阶段 4（外部信息+初步验证+大纲）、阶段 5（文字版报告 v1.0）、决策门 D（初稿评审）、阶段 6（PPT）、阶段 7（优化与交付+复盘沉淀）的详细执行指引见 `references/stage-3-7-details.md`。到达对应阶段时读取该文件。
 
----
-
-## 参考文件
-
-- `references/methods-toolbox.md`——阶段 2 的咨询式/经营式方法工具箱与选型指引（在阶段 2 读取）
-- `references/audience-adaptation.md`——受众适配矩阵与各类型的篇幅/语言/证据/建模呈现规范（在决策门 A 与阶段 5、6 读取）
-- `references/modeling-decision.md`——建模决策三列判断、常见误用、业务化翻译方法（在决策门 B 读取）
-- `references/stage-3-7-details.md`——阶段 3-7 的详细执行指引（在阶段 3 开始时读取）
-- `references/report-writing-llm-spec.md`——阶段 5 写作阶段的 LLM 指引规约：输入清单与权威层级、硬约束、骨架继承、边界/论证/表达规约、特殊情形与评审回路（在阶段 5 读取）
-- `assets/templates/`——全部产出物模板
-- `_报告进度.md` 的模板由 `setup-anappt` 维护（位于其 `assets/templates/_报告进度.md`，初始化时复制到项目根目录）；本技能只读写该文件，不另存模板。
+阶段 4 跑初步结果、阶段 5 撰写数据段落时，同时加载 `references/data-interpretation-guide.md`（结果解读规约）；阶段 5 动笔前加载 `references/report-writing-llm-spec.md`（写作 LLM 指引规约）。
 
 ## 语言与风格
 
-全程使用用户的语言（默认简体中文）。报告正文遵循"结论 + 影响 + 建议"的表达顺序，少术语；管理层版术语带解释、数字有参照系。
+全程使用用户的语言（默认简体中文）。各受众的语言、证据、篇幅规范见 `references/audience-adaptation.md`。
