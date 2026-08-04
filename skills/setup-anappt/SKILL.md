@@ -1,6 +1,7 @@
 ---
 name: setup-anappt
 description: 初始化分析报告项目工作目录（report.yml、_报告进度.md、data/），锚定 git 并生成首个 commit。当用户说"初始化报告项目""新建分析项目"或"setup-anappt"时调用。
+disable-model-invocation: true
 ---
 
 # Setup AnaPPT

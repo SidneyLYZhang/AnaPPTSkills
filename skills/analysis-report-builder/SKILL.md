@@ -1,6 +1,7 @@
 ---
 name: analysis-report-builder
 description: 通过 grill 追问引导 LLM 与用户协作构建经营/咨询分析报告（从需求承接到文字报告与 PPT 交付）。当用户需要"做一份分析报告/经营分析/业务分析/专题分析/竞品分析"，或提到"按 SOP 走报告流程""帮我逐步构建报告"时使用。也适用于中断后继续已有报告流程。
+disable-model-invocation: true
 ---
 
 # Analysis Report Builder
