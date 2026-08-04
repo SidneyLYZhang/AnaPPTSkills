@@ -1,44 +1,72 @@
 # 报告设定文件（阶段 0-1 产出，确认后锁定。如需修改，回到阶段 0-1 重做并重走后续流程）
 report:
-  title: ""                # 报告标题
-  subtitle: ""             # 副标题
-  topic: ""                # 选题方向
+  title: "AnaPPTSkills：让 AI Agent 协作产出分析报告的技能集"
+  subtitle: "从需求承接到 PPT 交付的标准化 SOP"
+  topic: "AnaPPTSkills 项目介绍——面向业务分析人员与同行的 AI Agent 技能集说明"
   motivation:              # 背景与业务问题
-    background: ""
-    business_problem: ""
-    trigger_event: ""      # 触发事件
+    background: "AnaPPTSkills 是一套面向经营/咨询分析报告的 AI Agent 技能集，项目刚刚创建并开源。"
+    business_problem: "公司内部业务分析人员（多为 Skill 小白）不了解什么是 Skill、如何安装使用；同时需要向同行说明该项目的设计理念与价值。"
+    trigger_event: "项目刚创建，需要对外介绍材料；同时用于公司内部小白用户分享，帮助同事尽快上手。"
   audience:                # 目标受众
-    primary: ""            # 管理层 / 执行层 / 外部客户
-    secondary: []
+    primary: "业务分析人员（初次接触 Skill 的小白用户）"
+    secondary:             # 按优先级排序
+      - "同行（AI Agent / 报告工具领域的开发者与从业者）"
+      - "Agent 开发者（附带受众，非核心）"
   objectives:              # 报告目标
-    - decision: ""         # 要支撑的决策
-      question: ""         # 要回答的具体问题
+    - decision: "是否采用 AnaPPTSkills 规范团队/个人报告流程"
+      question: "AnaPPTSkills 是什么、不是什么？解决什么问题、适合什么场景？如何快速上手？设计理念是什么？与同类工具的差异与优势？如何贡献？"
+    - decision: "公司内部业务人员是否上手使用"
+      question: "小白用户能否读完即上手，并说得清项目核心价值？"
   success_criteria:        # 成功标准
-    goal: ""               # 总体目标
-    arguments: []          # 论证拆解（含优先级与可忽略条件）
-    required_conclusions: [] # 必要结论
+    goal: "读者读完能独立上手使用 AnaPPTSkills，并能向他人讲清项目核心价值。"
+    arguments:             # 论证拆解（含优先级与可忽略条件）
+      - "是什么/不是什么（边界清晰，优先级高）"
+      - "解决什么问题、适合什么场景（价值论证，优先级高）"
+      - "如何快速上手（可操作，优先级高）"
+      - "设计理念（为什么这样设计，优先级中）"
+      - "与同类工具的差异与优势（对比论证，优先级中）"
+      - "如何贡献（社区参与，优先级低，可据时间裁剪）"
+    required_conclusions:  # 必要结论
+      - "AnaPPTSkills 是 AI Agent 技能集（Skill），不是可执行程序。"
+      - "通过 SOP + 两个 Skill 解决需求不清、流程不可控、断点难续三大报告痛点。"
+      - "包含 setup-anappt（初始化）与 analysis-report-builder（主流程）两个 Skill。"
+      - "小白用户可按 README 三步完成安装与首次使用。"
   delivery:                # 交付形式
-    format: []             # ppt / pdf / html
-    ppt_pages: 0
-    theme: ""
+    format: ["ppt", "markdown"]  # PPT + 文字版报告
+    ppt_pages: 12               # 至少 12 页，可更多
+    theme: "简洁专业风（深色标题 + 浅底，重点用色块强调），适配内部分享与对外介绍双重场景"
   scope:                   # 分析范围
-    time: ""
-    business_unit: ""
-    geography: ""
+    time: "当前版本（2026 年发布版本）"
+    business_unit: "AnaPPTSkills 项目本身（含两个 Skill + SOP + 模板）"
+    geography: "不限"
   constraints:             # 时间与资源约束
-    deadline: ""
-    analyst_availability: ""
-    data_availability: ""
+    deadline: "2026-08-04（今天完成）"
+    analyst_availability: "LLM 协作，可全投入"
+    data_availability: "项目自身文档完备（README、skill-description、分析SOP、两个 SKILL.md）"
   existing_materials:      # 已有资料与数据清单
-    - name: ""
-      type: ""            # 数据表 / 埋点 / 文档 / 访谈记录
-      coverage: ""
-      quality: ""         # 高 / 中 / 低 / 未知
+    - name: "README.md"
+      type: "文档"
+      coverage: "项目总览、痛点、安装、使用、关键特性、致谢"
+      quality: "高"
+    - name: "docs/skill-description.md"
+      type: "文档"
+      coverage: "两个 Skill 的触发条件、执行步骤、产出物、使用约束"
+      quality: "高"
+    - name: "assets/分析SOP.md"
+      type: "文档"
+      coverage: "SOP 总体结构、角色定义、各阶段要素、受众适配矩阵、落地建议"
+      quality: "高"
+    - name: "skills/setup-anappt/SKILL.md 与 skills/analysis-report-builder/SKILL.md"
+      type: "文档"
+      coverage: "Skill 声明与详细执行步骤（报告不直接引用，作为事实来源）"
+      quality: "高"
   reader_context:          # 读者先验认知与立场
-    known: ""              # 已知什么
-    stance: ""             # 倾向什么
-    persuasion: ""         # 被什么说服
+    known: "业务分析人员熟悉报告写作痛点（需求不清、返工、断点难续），但对 AI Agent / Skill 概念可能陌生。"
+    stance: "倾向实用：能否真正解决报告痛点、是否容易上手、是否值得投入学习。"
+    persuasion: "看到具体场景对比（用前 vs 用后）、可操作的安装步骤、与同类工具的客观差异。"
   compliance:              # 禁区与合规约束
     cannot_quote: []
-    cannot_conclude: []
-  benchmark: ""            # 标杆参照（可选）
+    cannot_conclude:       # 对比时不下优劣结论，用差异/侧重点说明
+      - "不写'某工具优于/劣于本项目'的绝对优劣结论"
+      - "对比同类工具时用'差异点''侧重点不同'表述，保持客观"
+  benchmark: "无特定样例标杆，按'项目白皮书 + 快速上手指南'混合风格撰写。对比对象清单（阶段2细化）：1) 通用 AI PPT/报告生成工具（Gamma、Tome、ChatGPT 直接生成）；2) 传统报告写作 SOP/方法论（纯人工 + 模板）；3) 同类 PPT 生成 Skill（ppt-master、dashi-ppt-skill、guizang-ppt-skill）。"
