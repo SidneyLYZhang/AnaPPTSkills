@@ -62,7 +62,7 @@ Per-stage actions: state the goal → produce deliverable from template → self
 
 ## Installation
 
-Two installation methods are available—pick either one.
+Three installation methods are available—pick either one. The first two are the recommended paths; the third is only for special situations.
 
 ### Method 1: `npx skills add` (recommended)
 
@@ -85,6 +85,41 @@ Tell the Agent directly in conversation:
 > "Please install the AnaPPTSkills skill set https://github.com/sidneylyzhang/AnaPPTSkills for me."
 
 The Agent will recognize the intent and invoke `npx skills add` on its own to complete the installation and registration.
+
+### Method 3: Local script install (special situations only)
+
+> ⚠️ **Use this method only when one of the following special situations applies.** For normal scenarios, use Method 1 or 2.
+>
+> - `npx skills add` fails (network/npm registry issues, missing `skills` CLI, etc.)
+> - The target machine cannot reach GitHub or npm
+> - You need the Skills installed into the Trae CN global directory (`%USERPROFILE%\.trae-cn\skills\`) with live-edit support (source-code changes reflected immediately during development)
+> - You need the Skills registered in Trae CN's `skill-config.json` (Method 1/2 does not maintain this file)
+
+The repository ships a Windows batch installer in `scripts/`—double-click to run:
+
+```bat
+:: Default install: English output, source from ..\skills relative to script, target %USERPROFILE%\.trae-cn\skills\
+install.bat
+
+:: Chinese output
+install.bat -cn
+
+:: Dry run (print actions without performing them)
+install.bat -whatif
+
+:: Custom source/target paths
+install.bat -Source "D:\my-fork\AnaPPTSkills\skills" -Target "C:\Users\me\.trae-cn\skills"
+```
+
+Script behavior:
+
+- **Git-repo aware**: auto-detects whether the project is inside a git working tree. Yes → creates a symbolic link via `mklink /D` (cross-volume supported, source changes reflected immediately). No → copies files directly.
+- **Auto UAC elevation**: creating a symbolic link requires admin or Developer Mode; the script requests UAC elevation only when the initial `mklink /D` fails.
+- **Backup strategy**: if the target Skill directory already exists as a real directory, it is renamed to `<name>.bak.<timestamp>` before install; if it is a link, it is removed and recreated. Backup paths are printed at the end.
+- **Auto-registers in `skill-config.json`**: writes both Skills into `%USERPROFILE%\.trae-cn\skill-config.json` under `managedSkills` (value `user_upload`); existing entries are preserved. Writes use a temp file + Move-Item atomic replacement to avoid corruption.
+- **PS 5.1 compatible**: `install.ps1` is pure ASCII (no BOM, no Chinese characters); Chinese strings live in `scripts/messages.zh.json` and are loaded only with `-cn`. This sidesteps the known PowerShell 5.1 parser failure on Chinese scripts.
+
+See `scripts/install.bat -help`, or [ADR 0001](./docs/adr/0001-symlink-with-auto-elevation.md) for the symlink decision rationale.
 
 ## How to use
 

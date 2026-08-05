@@ -62,7 +62,7 @@ AnaPPTSkills 不是可执行程序，而是两个可被 AI Agent（如 Trae、Cl
 
 ## 安装
 
-提供两种安装方式，任选其一即可。
+提供三种安装方式，任选其一即可。前两种为推荐路径，第三种仅针对特殊情况。
 
 ### 方式一：使用 `npx skills add`（推荐）
 
@@ -85,6 +85,41 @@ npx skills add ./AnaPPTSkills
 > "请帮我安装 AnaPPTSkills https://github.com/sidneylyzhang/AnaPPTSkills 这个技能集"
 
 Agent 会识别意图，自主调用 `npx skills add` 完成安装与注册。
+
+### 方式三：本地脚本直装（仅针对特殊情况）
+
+> ⚠️ **仅当下列特殊情况之一成立时才使用本方式**，正常场景请走方式一或方式二：
+>
+> - `npx skills add` 安装失败（网络问题、npm 源问题、`skills` CLI 缺失等）
+> - 目标机器无法访问 GitHub 或 npm
+> - 需要把 Skill 安装到 Trae CN 的全局目录（`%USERPROFILE%\.trae-cn\skills\`）并希望源代码变更立即生效（开发期 live-edit 场景）
+> - 需要把 Skill 注册到 Trae CN 的 `skill-config.json`（`npx skills add` 不会自动维护此文件）
+
+仓库 `scripts/` 目录提供一个 Windows 批处理安装脚本，双击即可运行：
+
+```bat
+:: 默认安装：英文输出，从脚本父目录的 skills\ 读取，安装到 %USERPROFILE%\.trae-cn\skills\
+install.bat
+
+:: 中文输出
+install.bat -cn
+
+:: 预演（不实际操作，仅打印将执行的动作）
+install.bat -whatif
+
+:: 自定义源/目标路径
+install.bat -Source "D:\my-fork\AnaPPTSkills\skills" -Target "C:\Users\me\.trae-cn\skills"
+```
+
+脚本行为说明：
+
+- **Git 仓库感知**：自动检测项目是否处于 git 工作树内。是 → 用 `mklink /D` 创建符号链接（支持跨卷、源码变更立即生效）；否 → 直接复制文件。
+- **UAC 自动提权**：创建符号链接需要管理员权限或开发者模式，脚本会在权限不足时自动请求 UAC 提权。
+- **备份策略**：若目标 Skill 目录已存在为真实目录，脚本会重命名为 `<name>.bak.<timestamp>` 后再安装；若是链接则直接重建。备份路径会在结束时打印。
+- **自动注册到 `skill-config.json`**：脚本会把两个 Skill 写入 `%USERPROFILE%\.trae-cn\skill-config.json` 的 `managedSkills` 字段（值 `user_upload`），若已存在则保留原值。写入采用临时文件 + Move-Item 原子替换，避免半写损坏。
+- **PS 5.1 兼容**：`install.ps1` 主体纯 ASCII（无 BOM、无中文字符），中文字符串单独存放在 `scripts/messages.zh.json` 中，仅在 `-cn` 时加载。规避了 PowerShell 5.1 解析中文脚本时报错的已知问题。
+
+详见 `scripts/install.bat -help`，或 [ADR 0001](./docs/adr/0001-symlink-with-auto-elevation.md) 了解 symlink 决策依据。
 
 ## 如何使用
 
