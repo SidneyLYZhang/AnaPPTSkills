@@ -31,7 +31,7 @@ $msg = New-Object 'System.Collections.Hashtable'
 
 $en = New-Object 'System.Collections.Hashtable'
 $en['banner_title']            = 'AnaPPTSkills Installer'
-$en['banner_subtitle']         = 'Install setup-anappt and analysis-report-builder into the Trae CN global skills directory.'
+$en['banner_subtitle']         = 'Install AnaPPTSkills skills into the Trae CN global skills directory.'
 $en['step_detect_source']      = '[1/5] Detecting source path and git environment...'
 $en['step_source_is_git']      = '[OK] Git repository detected; will use symbolic link (mklink /D) mode.'
 $en['step_source_no_git']      = '[OK] No git repository detected; will use copy mode.'
@@ -58,7 +58,7 @@ $en['step_config_written']     = '[OK] Written: {0}'
 $en['step_summary']            = '[4/5] Install summary'
 $en['step_complete']           = '[5/5] Complete. {0} Skill(s) installed.'
 $en['step_backups_header']     = 'Backups produced during this install (please handle manually):'
-$en['step_next_steps']         = 'Next step: restart Trae CN (or open a new session); setup-anappt and analysis-report-builder will appear in the Skills list.'
+$en['step_next_steps']         = 'Next step: restart Trae CN (or open a new session); the installed AnaPPTSkills will appear in the Skills list.'
 $en['error_source_not_found']  = '[ERROR] Source skills directory does not exist: {0}'
 $en['error_target_parent_missing'] = '[ERROR] Target parent does not exist (Trae CN not installed?): {0}'
 $en['error_mklink_failed']     = '[ERROR] mklink /D failed. Target: {0}, Source: {1}, Exit code: {2}'
@@ -205,7 +205,7 @@ if (-not (Test-Path -LiteralPath $Target -PathType Container)) {
 # ----------------------------------------------------------------------------
 # Skill list (folder names must match SKILL.md frontmatter 'name')
 # ----------------------------------------------------------------------------
-$skillNames = @('setup-anappt', 'analysis-report-builder')
+$skillNames = @('setup-anappt', 'analysis-report-builder', 'review-report')
 
 foreach ($name in $skillNames) {
     $skillSrc = Join-Path $sourceResolved $name

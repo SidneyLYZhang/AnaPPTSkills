@@ -4,7 +4,7 @@
 
 ## 这个项目是什么
 
-AnaPPTSkills 不是可执行程序，而是两个可被 AI Agent（如 Trae、Claude Code 等）加载的 **Skill**。每个 Skill 通过 `SKILL.md` 声明触发条件、交互原则与执行步骤，并附带模板与参考文档。Agent 在对话中识别到用户意图后，按 Skill 定义的结构化流程推进工作。
+AnaPPTSkills 不是可执行程序，而是多个可被 AI Agent（如 Trae、Claude Code 等）加载的 **Skill**。每个 Skill 通过 `SKILL.md` 声明触发条件、交互原则与执行步骤，并附带模板与参考文档。Agent 在对话中识别到用户意图后，按 Skill 定义的结构化流程推进工作。
 
 ## 解决什么问题
 
@@ -14,12 +14,13 @@ AnaPPTSkills 不是可执行程序，而是两个可被 AI Agent（如 Trae、Cl
 2. **流程不可控**——没有质量门，建模与否凭感觉，初稿评审流于形式。
 3. **断点难续**——多轮对话后状态丢失，换个会话就得从头讲背景。
 
-本项目用一份 SOP + 两个 Skill 来对症：
+本项目用一份 SOP + 三个 Skill 来对症：
 
 - **grill 追问机制**：阶段 0-1 反复追问直到 `report.yml` 锁定，答不出"给谁看 / 为什么现在做 / 要什么结论 / 何时交付"四问不进入下一步。
 - **四个决策门**（A 受众分层、B 建模评估、C 框架评审、D 初稿评审）作为质量刹车。
 - **断点续跑**：每步产出物写入 `_报告进度.md`，新会话读取后从断点继续。
 - **建模默认不做**：除非目标类型 + 数据条件 + 交付约束三列都满足，否则不上模型，避免可解释性下降。
+- **整体审校**：交付后可用 `review-report` 对文字 + PPT 做五层审校与换眼复核，分级问题写入 `_审校报告.md` 驱动优化。
 
 ## 包含的 Skill
 
@@ -60,13 +61,29 @@ AnaPPTSkills 不是可执行程序，而是两个可被 AI Agent（如 Trae、Cl
 
 每阶段动作：说明目标 → 按模板产出交付物 → 自查完成条件 → 呈现用户确认 → 更新进度文件。
 
+### 3. `review-report`——整体审校
+
+触发词："review 这份报告""审校报告""检查报告质量""报告体检""文字和 PPT 一起查"等。
+
+对**文字报告 + PPT** 做整体复核，审的是**结论—证据链**而非错别字。先按用途判风险档位决定审查强度，再跑五层清单：
+
+```
+定级 → 载入锚点 → 五层审查 → 换眼复核（独立 subagent）→ 落盘 _审校报告.md → 优化回路
+```
+
+- **五层**：硬伤（溯源/亲算/口径/图表）→ 逻辑与结论（结论—证据/相关 vs 因果/反方视角/回扣原问题）→ 完整一致（选择性呈现/交叉引用/文字↔PPT）→ 受众与风险（适配/敏感合规）→ 形式。
+- **换眼**：派不共享写作上下文的独立 subagent 冷读，破作者"补全盲区"。
+- **产出**：问题按 `必改 / 建议 / 可选` 三级写入 `_审校报告.md`，附按严重度排序的优化队列，回到 builder 对应阶段修订后可重跑，直到必改为零。
+
+可在 builder 交付后调用，也可独立用于任意已有报告，比决策门 D / 阶段 6 对账更深。
+
 ## 安装
 
 提供三种安装方式，任选其一即可。前两种为推荐路径，第三种仅针对特殊情况。
 
 ### 方式一：使用 `npx skills add`（推荐）
 
-在终端执行以下命令，将本仓库的两个 Skill 注册到当前 AI Agent（如 Trae、Claude Code）：
+在终端执行以下命令，将本仓库的三个 Skill 注册到当前 AI Agent（如 Trae、Claude Code）：
 
 ```bash
 # 从 GitHub 仓库安装
@@ -76,7 +93,7 @@ npx skills add https://github.com/sidneylyzhang/AnaPPTSkills
 npx skills add ./AnaPPTSkills
 ```
 
-执行完成后，`setup-anappt` 与 `analysis-report-builder` 会自动注册到 Agent 的 Skills 列表。
+执行完成后，`setup-anappt`、`analysis-report-builder` 与 `review-report` 会自动注册到 Agent 的 Skills 列表。
 
 ### 方式二：让 Agent 自主完成安装
 
@@ -116,7 +133,7 @@ install.bat -Source "D:\my-fork\AnaPPTSkills\skills" -Target "C:\Users\me\.trae-
 - **Git 仓库感知**：自动检测项目是否处于 git 工作树内。是 → 用 `mklink /D` 创建符号链接（支持跨卷、源码变更立即生效）；否 → 直接复制文件。
 - **UAC 自动提权**：创建符号链接需要管理员权限或开发者模式，脚本会在权限不足时自动请求 UAC 提权。
 - **备份策略**：若目标 Skill 目录已存在为真实目录，脚本会重命名为 `<name>.bak.<timestamp>` 后再安装；若是链接则直接重建。备份路径会在结束时打印。
-- **自动注册到 `skill-config.json`**：脚本会把两个 Skill 写入 `%USERPROFILE%\.trae-cn\skill-config.json` 的 `managedSkills` 字段（值 `user_upload`），若已存在则保留原值。写入采用临时文件 + Move-Item 原子替换，避免半写损坏。
+- **自动注册到 `skill-config.json`**：脚本会把三个 Skill 写入 `%USERPROFILE%\.trae-cn\skill-config.json` 的 `managedSkills` 字段（值 `user_upload`），若已存在则保留原值。写入采用临时文件 + Move-Item 原子替换，避免半写损坏。
 - **PS 5.1 兼容**：`install.ps1` 主体纯 ASCII（无 BOM、无中文字符），中文字符串单独存放在 `scripts/messages.zh.json` 中，仅在 `-cn` 时加载。规避了 PowerShell 5.1 解析中文脚本时报错的已知问题。
 
 详见 `scripts/install.bat -help`，或 [ADR 0001](./docs/adr/0001-symlink-with-auto-elevation.md) 了解 symlink 决策依据。
@@ -126,7 +143,8 @@ install.bat -Source "D:\my-fork\AnaPPTSkills\skills" -Target "C:\Users\me\.trae-
 1. **加载 Skill**：参照上方 [安装](#安装) 章节任选一种方式完成注册。
 2. **初始化项目**：在对话中触发 `setup-anappt`，在工作目录生成 `report.yml`、`_报告进度.md` 与 `data/`。
 3. **构建报告**：触发 `analysis-report-builder`，按阶段 0-1 开始 grill 追问。每阶段确认后自动推进。
-4. **中断与续跑**：随时可说"停""改需求""回到阶段X"。新会话只需再次触发主 Skill，会读取进度文件从断点继续。
+4. **整体审校**：交付后触发 `review-report`，对文字 + PPT 做五层审校与换眼复核，问题分级写入 `_审校报告.md`，据此回到对应阶段优化。
+5. **中断与续跑**：随时可说"停""改需求""回到阶段X"。新会话只需再次触发主 Skill，会读取进度文件从断点继续。
 
 ## 关键特性
 

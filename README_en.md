@@ -4,7 +4,7 @@ A collection of AI Agent **Skills** for building **business / consulting analysi
 
 ## What this project is
 
-AnaPPTSkills is not an executable program. It is a pair of **Skills** that can be loaded by AI Agents (e.g. Trae, Claude Code). Each Skill declares its trigger conditions, interaction principles, and execution steps via a `SKILL.md` file, accompanied by templates and reference docs. When the Agent recognizes the user's intent in conversation, it drives the work forward following the structured flow defined by the Skill.
+AnaPPTSkills is not an executable program. It is a set of **Skills** that can be loaded by AI Agents (e.g. Trae, Claude Code). Each Skill declares its trigger conditions, interaction principles, and execution steps via a `SKILL.md` file, accompanied by templates and reference docs. When the Agent recognizes the user's intent in conversation, it drives the work forward following the structured flow defined by the Skill.
 
 ## What problem it solves
 
@@ -14,12 +14,13 @@ Writing analysis reports typically suffers from three pain points:
 2. **Uncontrollable process**—no quality gates, modeling decisions are made by gut feel, and draft reviews become a formality.
 3. **Hard to resume after interruption**—state is lost across multi-turn conversations; switching sessions means re-explaining the background from scratch.
 
-This project addresses them with one SOP plus two Skills:
+This project addresses them with one SOP plus three Skills:
 
 - **Grill questioning mechanism**: Stage 0-1 keeps asking sharp questions until `report.yml` is locked. You cannot proceed until you can answer four questions: *Who is it for? Why now? What conclusions are needed? When is the deadline?*
 - **Four decision gates** (A audience tiering, B modeling assessment, C framework review, D draft review) act as quality brakes.
 - **Resume from breakpoint**: every deliverable is written to `_报告进度.md`; a new session reads it and continues from where it left off.
 - **Modeling is opt-in by default**: unless goal type + data condition + delivery constraint all pass, no model is built—avoiding loss of interpretability.
+- **Whole-report review**: after delivery, `review-report` audits the text + PPT across five layers with a fresh-eyes pass, grading issues into `_审校报告.md` to drive optimization.
 
 ## Skills included
 
@@ -60,13 +61,29 @@ Stage 6 PPT → Stage 7 Optimization, delivery + retrospective
 
 Per-stage actions: state the goal → produce deliverable from template → self-check completion criteria → present to user for confirmation → update progress file.
 
+### 3. `review-report`—Whole-report review
+
+Trigger words: "review this report", "audit the report", "check report quality", "report health-check", "check the text and PPT together", etc.
+
+Reviews the **text report + PPT** as a whole. What it audits is the **conclusion–evidence chain**, not typos. It first gauges the risk tier by purpose to decide review depth, then runs a five-layer checklist:
+
+```
+grade → load anchors → five-layer review → fresh-eyes re-review (independent subagent) → write _审校报告.md → optimization loop
+```
+
+- **Five layers**: hard flaws (traceability / recompute / caliber / charts) → logic & conclusions (conclusion–evidence / correlation vs. causation / opposing view / back to the original question) → completeness & consistency (selective reporting / cross-references / text↔PPT) → audience & risk (fit / sensitive-compliance) → form.
+- **Fresh eyes**: a subagent that does not share the writing context cold-reads the draft, breaking the author's completion blind spot.
+- **Output**: issues graded **must-fix / suggestion / optional** into `_审校报告.md`, with an optimization queue sorted by severity; revise in the matching builder stage and re-run until must-fix items hit zero.
+
+Runs after the builder's delivery, or standalone on any existing report—deeper than decision gate D / the Stage-6 reconciliation.
+
 ## Installation
 
 Three installation methods are available—pick either one. The first two are the recommended paths; the third is only for special situations.
 
 ### Method 1: `npx skills add` (recommended)
 
-Run the following command in your terminal to register both Skills with the current AI Agent (e.g. Trae, Claude Code):
+Run the following command in your terminal to register the three Skills with the current AI Agent (e.g. Trae, Claude Code):
 
 ```bash
 # Install from a GitHub repository
@@ -76,7 +93,7 @@ npx skills add https://github.com/sidneylyzhang/AnaPPTSkills
 npx skills add ./AnaPPTSkills
 ```
 
-Once complete, `setup-anappt` and `analysis-report-builder` will be automatically registered in the Agent's Skills list.
+Once complete, `setup-anappt`, `analysis-report-builder`, and `review-report` will be automatically registered in the Agent's Skills list.
 
 ### Method 2: Let the Agent self-install
 
@@ -116,7 +133,7 @@ Script behavior:
 - **Git-repo aware**: auto-detects whether the project is inside a git working tree. Yes → creates a symbolic link via `mklink /D` (cross-volume supported, source changes reflected immediately). No → copies files directly.
 - **Auto UAC elevation**: creating a symbolic link requires admin or Developer Mode; the script requests UAC elevation only when the initial `mklink /D` fails.
 - **Backup strategy**: if the target Skill directory already exists as a real directory, it is renamed to `<name>.bak.<timestamp>` before install; if it is a link, it is removed and recreated. Backup paths are printed at the end.
-- **Auto-registers in `skill-config.json`**: writes both Skills into `%USERPROFILE%\.trae-cn\skill-config.json` under `managedSkills` (value `user_upload`); existing entries are preserved. Writes use a temp file + Move-Item atomic replacement to avoid corruption.
+- **Auto-registers in `skill-config.json`**: writes all three Skills into `%USERPROFILE%\.trae-cn\skill-config.json` under `managedSkills` (value `user_upload`); existing entries are preserved. Writes use a temp file + Move-Item atomic replacement to avoid corruption.
 - **PS 5.1 compatible**: `install.ps1` is pure ASCII (no BOM, no Chinese characters); Chinese strings live in `scripts/messages.zh.json` and are loaded only with `-cn`. This sidesteps the known PowerShell 5.1 parser failure on Chinese scripts.
 
 See `scripts/install.bat -help`, or [ADR 0001](./docs/adr/0001-symlink-with-auto-elevation.md) for the symlink decision rationale.
@@ -126,7 +143,8 @@ See `scripts/install.bat -help`, or [ADR 0001](./docs/adr/0001-symlink-with-auto
 1. **Load the Skills**: follow any method in the [Installation](#installation) section above to complete registration.
 2. **Initialize a project**: trigger `setup-anappt` in conversation to generate `report.yml`, `_报告进度.md`, and `data/` in the working directory.
 3. **Build the report**: trigger `analysis-report-builder` to start Stage 0-1 grill questioning. Each stage auto-advances after user confirmation.
-4. **Interrupt and resume**: say "stop", "change requirements", or "go back to stage X" at any time. To resume in a new session, simply trigger the main Skill again—it reads the progress file and continues from the breakpoint.
+4. **Whole-report review**: after delivery, trigger `review-report` to audit the text + PPT across five layers with a fresh-eyes pass; issues are graded into `_审校报告.md`, then revise in the matching stage.
+5. **Interrupt and resume**: say "stop", "change requirements", or "go back to stage X" at any time. To resume in a new session, simply trigger the main Skill again—it reads the progress file and continues from the breakpoint.
 
 ## Key features
 
