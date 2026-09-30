@@ -110,7 +110,7 @@ setup-anappt 初始化项目
 
 ### 2.3 指标口径 → 方法 → 数据清单
 
-**方法选型分两层**：报告类型（咨询式/经营式）按 `references/methods-toolbox.md` 选框架；具体分析手段（四类分析层次、统计检验三步法、机器学习模型、归因方法、可视化图表）的选型决策按 `references/analysis-model-selection-guide.md`——先回答"五问法"（目标/问题域/数据条件/约束/决策支撑），再按决策矩阵落方法，选定即列出该方法的前提条件与验证方式（如选 t 检验→先做正态性检验，不满足切非参数替代）。
+**方法选型分两层**：报告类型（咨询式/经营式）按 `references/methods-toolbox.md` 选框架；具体分析手段（四类分析层次、统计检验三步法、机器学习模型、归因方法、可视化图表）的选型决策按 `references/analysis-model-selection-guide.md`——先回答"五问法"（目标/问题域/数据条件/约束/决策支撑），再按决策矩阵落方法，选定即列出该方法的前提条件与验证方式（如选 t 检验→先做正态性检验，不满足切非参数替代）。**可视化图表**的选型（先定要表达的相对关系 → 图表类型 → 编码通道）按 `references/visualization-principles.md` 第二节；该文件是本技能全部可视化产出的唯一权威（信·达·雅三准则、图表选型、逐图自检）。
 
 产出物：《分析框架》+《数据需求清单》（模板 `assets/templates/01-分析框架与数据需求.md`）。
 
@@ -138,7 +138,7 @@ setup-anappt 初始化项目
 
 阶段 3（数据准备与确认）、阶段 4（外部信息+初步验证+大纲）、阶段 5（文字版报告 v1.0）、决策门 D（初稿评审）、阶段 6（PPT）、阶段 7（优化与交付+复盘沉淀）的详细执行指引见 `references/stage-3-7-details.md`。到达对应阶段时读取该文件。
 
-阶段 4 跑初步结果、阶段 5 撰写数据段落时，同时加载 `references/data-interpretation-guide.md`（结果解读规约）；阶段 5 动笔前加载 `references/report-writing-llm-spec.md`（写作 LLM 指引规约）。
+阶段 4 跑初步结果、阶段 5 撰写数据段落时，同时加载 `references/data-interpretation-guide.md`（结果解读规约）；阶段 5 动笔前加载 `references/report-writing-llm-spec.md`（写作 LLM 指引规约）；阶段 4 立配图规划、阶段 5 出图与读图、阶段 6 重绘 PPT 图表时加载 `references/visualization-principles.md`（可视化准则：信·达·雅）。
 
 ## 语言与风格
 

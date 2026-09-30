@@ -8,11 +8,12 @@ AnaPPTSkills is not an executable program. It is a set of **Skills** that can be
 
 ## What problem it solves
 
-Writing analysis reports typically suffers from three pain points:
+Writing analysis reports typically suffers from four pain points:
 
 1. **Starting before requirements are clear**—audience, decision scenario, and success criteria are not aligned, leading to heavy rework.
 2. **Uncontrollable process**—no quality gates, modeling decisions are made by gut feel, and draft reviews become a formality.
 3. **Hard to resume after interruption**—state is lost across multi-turn conversations; switching sessions means re-explaining the background from scratch.
+4. **Untrustworthy charts**—truncated axes, 3D effects, and area-encoded numbers make the visuals look rich while a single chart can cast doubt on every conclusion.
 
 This project addresses them with one SOP plus three Skills:
 
@@ -20,6 +21,7 @@ This project addresses them with one SOP plus three Skills:
 - **Four decision gates** (A audience tiering, B modeling assessment, C framework review, D draft review) act as quality brakes.
 - **Resume from breakpoint**: every deliverable is written to `_报告进度.md`; a new session reads it and continues from where it left off.
 - **Modeling is opt-in by default**: unless goal type + data condition + delivery constraint all pass, no model is built—avoiding loss of interpretability.
+- **Trustworthy charts**: every visual must first clear the *faithfulness* bar (proportional encoding, comparisons that carry their own reference point, no design tricks standing in for data) before expressiveness and elegance are even considered.
 - **Whole-report review**: after delivery, `review-report` audits the text + PPT across five layers with a fresh-eyes pass, grading issues into `_审校报告.md` to drive optimization.
 
 ## Skills included
@@ -52,11 +54,11 @@ Stage 2 Analysis framework and data needs (consulting / operational / hybrid)
         ↓
 [Gate B] Whether to model (default: no) → [Gate C] Framework review
         ↓
-Stage 3 Data preparation and confirmation → Stage 4 External info + preliminary validation + outline
+Stage 3 Data preparation and confirmation → Stage 4 External info + preliminary validation + outline (incl. chart planning)
         ↓
 Stage 5 Written report v1.0 → [Gate D] Draft review
         ↓
-Stage 6 PPT → Stage 7 Optimization, delivery + retrospective
+Stage 6 PPT (charts redrawn) → Stage 7 Optimization, delivery + retrospective
 ```
 
 Per-stage actions: state the goal → produce deliverable from template → self-check completion criteria → present to user for confirmation → update progress file.
@@ -149,6 +151,7 @@ See `scripts/install.bat -help`, or [ADR 0001](./docs/adr/0001-symlink-with-auto
 ## Key features
 
 - **Conclusion first**: both the written report and the PPT follow the pyramid principle; the title states the conclusion.
+- **Trustworthy charts**: visuals follow the *faithfulness · expressiveness · elegance* doctrine, backed by one chart spec that runs through the whole flow—chart type chosen in Stage 2, chart planning set in Stage 4, charts drawn and read in Stage 5, redrawn and re-checked in Stage 6, with a per-chart checklist before delivery.
 - **Audience adaptation**: three specs for management / business staff / external readers—same conclusion, tailored presentation in length, language, and evidence strength.
 - **Actionable recommendations**: every recommendation specifies "who, does what, when, expected effect".
 - **Traceable data**: every number traces back to the Stage 3 data snapshot; every external input is tagged with source and timeliness.
